@@ -13,7 +13,7 @@ import (
 type ICustomerService interface {
 	GetAllCustomers() ([]*models.Customer, error)
 	CreateCustomer(request service.CreateCustomerRequest) (*models.Customer, error)
-	GetCustomerById(id int64) (*models.Customer, error)
+	GetCustomerByID(id int64) (*models.Customer, error)
 }
 
 type CustomerHandler struct {
@@ -64,12 +64,12 @@ func (h *CustomerHandler) GetCustomerById(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		log.Printf("Invalid customer ID: %v", err)
+		log.Printf("Invalid customer ID: %d, %v", id, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
 		return
 	}
 
-	customer, err := h.customerService.GetCustomerById(id)
+	customer, err := h.customerService.GetCustomerByID(id)
 	if err != nil {
 		log.Printf("Error retrieving customer: %v", err)
 		if err.Error() == "customer not found" {

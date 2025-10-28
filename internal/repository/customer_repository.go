@@ -27,7 +27,7 @@ func (r *CustomerRepository) CreateCustomer(customer *models.Customer) error {
 	).Scan(&customer.ID)
 
 	if err != nil {
-		log.Printf("Error creating user: %v", err)
+		log.Printf("Error creating customer: %v", err)
 		return err
 	}
 
