@@ -11,7 +11,7 @@ import (
 
 type ICustomerService interface {
 	GetAllCustomers() ([]*models.Customer, error)
-	CreateCustomer(request *models.Customer) (*models.Customer, error)
+	CreateCustomer(request service.CreateCustomerRequest) (*models.Customer, error)
 }
 
 type CustomerHandler struct {
