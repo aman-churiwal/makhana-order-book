@@ -6,8 +6,15 @@ import (
 	"log"
 )
 
+type CreateCustomerRequest struct {
+	Name    string
+	Contact string
+	Address string
+}
+
 type ICustomerRepository interface {
 	GetAllCustomers() ([]*models.Customer, error)
+	CreateCustomer(customer *models.Customer) error
 }
 
 type CustomerService struct {
@@ -28,4 +35,27 @@ func (s *CustomerService) GetAllCustomers() ([]*models.Customer, error) {
 	}
 
 	return customers, nil
+}
+
+func (s *CustomerService) CreateCustomer(request CreateCustomerRequest) (*models.Customer, error) {
+	if request.Name == "" {
+		return nil, errors.New("name is required")
+	}
+	if request.Contact == "" {
+		return nil, errors.New("contact is required")
+	}
+
+	customer := &models.Customer{
+		Name:    request.Name,
+		Contact: request.Contact,
+		Address: request.Address,
+	}
+
+	err := s.customerRepository.CreateCustomer(customer)
+	if err != nil {
+		log.Printf("Service Error: %v", err)
+		return nil, errors.New("error creating customer")
+	}
+
+	return customer, nil
 }

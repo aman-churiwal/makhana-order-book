@@ -22,6 +22,7 @@ func CreateRouter(db *sql.DB) *gin.Engine {
 
 			// Endpoints
 			customerRoutes.GET("", customerHandler.GetAllCustomers)
+			customerRoutes.POST("/create", customerHandler.CreateCustomer)
 		}
 
 	}
