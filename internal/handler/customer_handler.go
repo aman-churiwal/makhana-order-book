@@ -5,6 +5,7 @@ import (
 	"aman/makhana/internal/service"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +13,7 @@ import (
 type ICustomerService interface {
 	GetAllCustomers() ([]*models.Customer, error)
 	CreateCustomer(request service.CreateCustomerRequest) (*models.Customer, error)
+	GetCustomerById(id int64) (*models.Customer, error)
 }
 
 type CustomerHandler struct {
@@ -56,4 +58,27 @@ func (h *CustomerHandler) CreateCustomer(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, customer)
+}
+
+func (h *CustomerHandler) GetCustomerById(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		log.Printf("Invalid customer ID: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
+		return
+	}
+
+	customer, err := h.customerService.GetCustomerById(id)
+	if err != nil {
+		log.Printf("Error retrieving customer: %v", err)
+		if err.Error() == "customer not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Customer not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, customer)
 }

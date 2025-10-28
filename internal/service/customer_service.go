@@ -15,6 +15,7 @@ type CreateCustomerRequest struct {
 type ICustomerRepository interface {
 	GetAllCustomers() ([]*models.Customer, error)
 	CreateCustomer(customer *models.Customer) error
+	GetCustomerByID(id int64) (*models.Customer, error)
 }
 
 type CustomerService struct {
@@ -55,6 +56,20 @@ func (s *CustomerService) CreateCustomer(request CreateCustomerRequest) (*models
 	if err != nil {
 		log.Printf("Service Error: %v", err)
 		return nil, errors.New("error creating customer")
+	}
+
+	return customer, nil
+}
+
+func (s *CustomerService) GetCustomerByID(id int64) (*models.Customer, error) {
+	customer, err := s.customerRepository.GetCustomerByID(id)
+	if err != nil {
+		log.Printf("Service Error: %v", err)
+		return nil, errors.New("could not retrieve customer")
+	}
+
+	if customer == nil {
+		return nil, errors.New("customer not found")
 	}
 
 	return customer, nil

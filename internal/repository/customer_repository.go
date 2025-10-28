@@ -3,6 +3,8 @@ package repository
 import (
 	"aman/makhana/internal/models"
 	"database/sql"
+	"errors"
+	"fmt"
 	"log"
 )
 
@@ -25,7 +27,7 @@ func (r *CustomerRepository) CreateCustomer(customer *models.Customer) error {
 	).Scan(&customer.ID)
 
 	if err != nil {
-		log.Printf("Error creating user: %v")
+		log.Printf("Error creating user: %v", err)
 		return err
 	}
 
@@ -67,4 +69,28 @@ func (r *CustomerRepository) GetAllCustomers() ([]*models.Customer, error) {
 	}
 
 	return customers, nil
+}
+
+func (r *CustomerRepository) GetCustomerByID(id int64) (*models.Customer, error) {
+	query := `SELECT id, name, contact, address FROM customers WHERE id = $1`
+
+	customer := &models.Customer{}
+	err := r.db.QueryRow(query, id).Scan(
+		&customer.ID,
+		&customer.Name,
+		&customer.Contact,
+		&customer.Address,
+	)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			log.Printf("No customer found with ID: %d", id)
+			return nil, fmt.Errorf(`no customer found with ID: %d`, id)
+		}
+
+		log.Printf("Error querying customer with ID: %d: %v", id, err)
+		return nil, err
+	}
+
+	return customer, nil
 }
