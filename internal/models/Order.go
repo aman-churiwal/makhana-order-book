@@ -24,6 +24,6 @@ type OrderDetail struct {
 	OrderID       int     `json:"order_id"`
 	MakhanaTypeID int     `json:"makhana_type_id"`
 	Quantity      float64 `json:"quantity"`
-	Price         float64 `json:"price"`
+	Rate          float64 `json:"rate"`
 	LineItemTotal float64 `json:"line_item_total"`
 }

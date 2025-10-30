@@ -11,6 +11,7 @@ func CreateRouter(db *sql.DB) *gin.Engine {
 
 	api := router.Group("/api/v1")
 	RegisterCustomerRouter(api, db)
+	RegisterOrderRouter(api, db)
 
 	return router
 }
